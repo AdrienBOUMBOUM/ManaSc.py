@@ -38,24 +38,24 @@ Y = [0] + [LpVariable("Client " + str(i) + " A LA FH",lowBound=0) for i in range
 
 ###CONTRAINTES
 
+# Contraintes clients
+tot_i = {}
+for i in clients:#(3)
+    tot_x = 0
+    for j in silos: #(12)
+        if j == len(silos):
+            tot_x += X[i, j]
+            tot_i[i] = tot_x
+            break
+        else:
+            pass
+        tot_x += X[i, j]
 
-# Contrainte quantité
-
-for i in range(3):
-        m += lpSum(x[i]) + Y[i] <= c_quantitymax[i]
-        m += lpSum(x[i]) + Y[i] >= c_quantitymin[i]
-
-        m += lpSum(x[i]) + Y[i] <= c_quantitymax[i]*c_humidity[i]
-        m += lpSum(x[i]) + Y[i] >= c_quantitymin[i]*c_humidity[i]
-
-        m += lpDot(list(density.values()), x[i]) + 0.85*Y[i] <= c_quantitymax[i]*c_density[i]
-        m += lpDot(list(density.values()), x[i]) + 0.85*Y[i] >= c_quantitymin[i]*c_density[i]
-
-        m += lpDot(list(dommage.values()), x[i]) + 0.02*Y[i] <= c_quantitymax[i]*c_dommage[i]
-        m += lpDot(list(dommage.values()), x[i]) + 0.02*Y[i] >= c_quantitymin[i]*c_dommage[i]
-
-        m += lpDot(list(non_organic.values()), x[i]) + 0.02*Y[i] <= c_quantitymax[i]*c_non_organic[i]
-        m += lpDot(list(non_organic.values()), x[i]) + 0.02*Y[i] >= c_quantitymin[i]*c_non_organic[i]
+for i in clients:
+    prob += lpSum([X[i, j] * humidity[j] for j in silos]) <= c_hummidity[i] * tot_i[i]
+    prob += lpSum([X[i, j] * dammage[j] for j in silos]) <= c_dammage[i] * tot_i[i]
+    prob += lpSum([X[i, j] * non_organic[j] for j in silos]) <= c_non_organic[i] * tot_i[i]
+    prob += lpSum([X[i, j] * density[j] for j in silos]) >= c_density[i] * tot_i[i]
 
 p = np.zeros(3)
 for i in range(3):
