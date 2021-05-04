@@ -101,4 +101,4 @@ for i in range(3):
         else:
             client = "HappyBle"
 
-        print("Le silo {}, a vendu {} au client {}".format(j + 1, x[i][j], client))
+        print("Le silo {}, a vendu {} au client {}".format(j + 1, X[i][j], client))
