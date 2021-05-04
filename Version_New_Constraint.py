@@ -37,7 +37,7 @@ print(clients, c_density, c_dommage, c_non_organic, c_quantitymax, c_quantitymin
 
 model = LpProblem(sense=LpMaximize)
 
-x = [[LpVariable("Client " + str(i) + " Silo " + str(j),lowBound=0) for j in range(12)] for i in range(3)]
+X = [[LpVariable("Client " + str(i) + " Silo " + str(j),lowBound=0) for j in range(12)] for i in range(3)]
 
 R = 67
 
@@ -52,7 +52,7 @@ for i in clients
 for j in silo:
     model += lpSum([X[i, j] for i in clients]) <= quantity[j]
 ##Carbu vert pas livré par FH a cause des dates
-x[1, 12] = 0
+X[1, 12] = 0
 
 #contrainte clients
 
@@ -83,7 +83,7 @@ model.resolve()
 client = ""
 for i in range(3):
         for j in range(12):
-                x[i][j] = value(x[i][j])
+                X[i][j] = value(x[i][j])
                 if i == 0 :
                         client = "CarbuVert"
 
