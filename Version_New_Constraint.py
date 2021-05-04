@@ -55,6 +55,10 @@ for i in clients:
 ### Contrainte de positivité du blé dans les silos ###
 for j in silo:
     model += lpSum([X[i, j] for i in clients]) <= quantity[j]
+
+#résultat doit être positif
+for i in clients:
+    prob += lpSum([X[i, j] * cout[j] for j in silo]) <= Prix[i] * qtotal[i]
 ##Carbu vert pas livré par FH a cause des dates
 X[1, 12] = 0
 
@@ -82,12 +86,15 @@ for i in clients:
     model += lpSum([X[i, j] * dommage[j] for j in silos]) <= c_dommage[i] * tot_c[i]#contrainte endommage
     model += lpSum([X[i, j] * non_organic[j] for j in silos]) <= c_non_organic[i] * tot_c[i]#contrainte non organique
     model += lpSum([X[i, j] * density[j] for j in silos]) >= c_density[i] * tot_c[i]#contrainte densite
-    
+
+
+     
+                       
 model.resolve()
 client = ""
 for i in range(3):
         for j in range(12):
-                X[i][j] = value(x[i][j])
+                x[i][j] = value(x[i][j])
                 if i == 0 :
                         client = "CarbuVert"
 
@@ -97,5 +104,6 @@ for i in range(3):
                 else :
                         client = "HappyBle"
 
-                print("Le silo {}, a vendu {} au client {}".format(j+1,X[i][j],client))
+                print("Le silo {}, a vendu {} au client {}".format(j+1,x[i][j],client))
+
 
