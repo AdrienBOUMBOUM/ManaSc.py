@@ -15,6 +15,7 @@ density = dict(zip(silo, df['density']))
 dommage = dict(zip(silo, df['dommage']))
 non_organic = dict(zip(silo, df['non-organic']))
 quantity = dict(zip(silo, df['quantity']))
+cout = dict(zip(silos, df['cout']))
 
 print(silo, humidity, density, dommage, non_organic, quantity)
 
@@ -45,7 +46,10 @@ R = 67
 for i in clients
     p[i] = (R * 1.15) - (0.5 * c_humidity[i]) - c_dommage[i] - c_non_organic[i] + (5 * c_density[i])
 
-
+#fonction objective
+for i in clients:
+    for j in silo:
+        prob += lpSum([X[i, j] * (p[i] - cout[j])
 
 ### CONSTRAINTS ###
 ### Contrainte de positivité du blé dans les silos ###
@@ -93,5 +97,5 @@ for i in range(3):
                 else :
                         client = "HappyBle"
 
-                print("Le silo {}, a vendu {} au client {}".format(j+1,x[i][j],client))
+                print("Le silo {}, a vendu {} au client {}".format(j+1,X[i][j],client))
 
