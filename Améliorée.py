@@ -59,7 +59,7 @@ for j in silo:
 
 # resultat doit etre positif
 for i in clients:
-    model += lpSum([X[i, j] * cout[j] for j in silo]) <= p[i] * tot_c[i]
+    model += lpSum([X[i, j] * cout[j] for j in silo]) <= p[i] * tot[i]
 ##Carbu vert pas livre par FH a cause des dates
 X[1, 12] = 0
 
@@ -70,22 +70,22 @@ for i in clients:
     model += lpSum([X[i, j] for j in silo]) >= c_quantitymin[i]
     model += lpSum([X[i, j] for j in silo]) <= c_quantitymax[i]
 
-tot_c = {}  # total
+tot = {}  # total
 for i in clients:
     tot_s = 0  # qte que les clients recoivent de chaque silo
     for j in silo:
         if j == len(silo):
             tot_s += X[i, j]
-            tot_c[i] = tot_s
+            tot[i] = tot_s
             break
         else:
             tot_s += X[i, j]
 
 for i in clients:
-    model += lpSum([X[i, j] * humidity[j] for j in silo]) <= c_humidity[i] * tot_c[i]  # contrainte Humidi
-    model += lpSum([X[i, j] * dommage[j] for j in silo]) <= c_dommage[i] * tot_c[i]  # contrainte endommage
-    model += lpSum([X[i, j] * non_organic[j] for j in silo]) <= c_non_organic[i] * tot_c[i]  # contrainte non organique
-    model += lpSum([X[i, j] * density[j] for j in silo]) >= c_density[i] * tot_c[i]  # contrainte densite
+    model += lpSum([X[i, j] * humidity[j] for j in silo]) <= c_humidity[i] * tot[i]  # contrainte Humidi
+    model += lpSum([X[i, j] * dommage[j] for j in silo]) <= c_dommage[i] * tot[i]  # contrainte endommage
+    model += lpSum([X[i, j] * non_organic[j] for j in silo]) <= c_non_organic[i] * tot[i]  # contrainte non organique
+    model += lpSum([X[i, j] * density[j] for j in silo]) >= c_density[i] * tot[i]  # contrainte densite
 
 model.resolve()
 client = ""
