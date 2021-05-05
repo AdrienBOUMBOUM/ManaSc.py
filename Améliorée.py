@@ -4,6 +4,7 @@ from pulp import *
 import pandas as pd
 
 ### DATA ###
+from typing import List, Any
 
 df = pd.read_excel("Data_Silo.xlsx", nrows=12)
 
@@ -20,7 +21,7 @@ print(silo, humidity, density, dommage, non_organic, quantity)
 
 ### DATA CLIENTS ###
 
-df = pd.read_excel("Data_Clients1.xlsx", nrows=3)
+df = pd.read_excel("Data_Clients.xlsx", nrows=3)
 
 clients = list(df['Clients'])
 
@@ -43,7 +44,7 @@ R = 67
 
 ### prix demande a chaque client ###
 p = {}
-for i in clients
+for i in clients:
     p[i] = (R * 1.15) - (0.5 * c_humidity[i]) - c_dommage[i] - c_non_organic[i] + (5 * c_density[i])
 
 # fonction objective
@@ -52,34 +53,33 @@ for i in clients:
         model += lpSum([X[i, j] * (p[i] - cout[j])
 
  ### CONSTRAINTS ###
-### Contrainte de positivité du blé dans les silos ###
+### Contrainte de positivite du ble dans les silos ###
 for j in silo:
     model += lpSum([X[i, j] for i in clients]) <= quantity[j]
 
-# résultat doit être positif
+# resultat doit etre positif
 for i in clients:
     model += lpSum([X[i, j] * cout[j] for j in silo]) <= p[i] * tot_c[i]
-##Carbu vert pas livré par FH a cause des dates
+##Carbu vert pas livre par FH a cause des dates
 X[1, 12] = 0
 
 # contrainte clients
 
-# Contraintes quantités demandées
+# Contraintes quantites demandees
 for i in clients:
     model += lpSum([X[i, j] for j in silo]) >= c_quantitymin[i]
     model += lpSum([X[i, j] for j in silo]) <= c_quantitymax[i]
 
 tot_c = {}  # total
 for i in clients:
-    tot_s = 0  # qté que les clients recoivent de chaque silo
+    tot_s = 0  # qte que les clients recoivent de chaque silo
     for j in silo:
         if j == len(silo):
             tot_s += X[i, j]
             tot_c[i] = tot_s
             break
         else:
-            pass
-        tot_s += X[i, j]
+            tot_s += X[i, j]
 
 for i in clients:
     model += lpSum([X[i, j] * humidity[j] for j in silo]) <= c_humidity[i] * tot_c[i]  # contrainte Humidi
